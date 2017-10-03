@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Message from './Message.jsx';
+import SystemMessage from './SystemMessage.jsx';
 
 class MessageList extends Component {
 
@@ -9,13 +10,26 @@ class MessageList extends Component {
 
   render() {
     return (
-        <main className="messages">
-          {this.props.messageList.map((message) => {
-            return (
-              <Message key={message.id} messageBody={message}></Message>
-            );
-          })}
-        </main>
+      <main className="messages">
+        {this.props.messageList.map((message) => {
+
+          switch (message.type) {
+            case 'incomingMessage':
+              return (
+                <Message key={message.id} messageBody={message}></Message>
+              );
+            case 'incomingNotification':
+              return (
+                <SystemMessage key={message.id} messageBody={message.content}></SystemMessage>
+              );
+            case 'incomingOnlineUser':
+              return (
+                <SystemMessage key={message.id} messageBody={message.content}></SystemMessage>
+              );
+          }
+
+        })}
+      </main>
     );
   }
 }
