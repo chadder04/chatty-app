@@ -18,15 +18,14 @@ class App extends Component {
 
 
   componentDidMount() {
-    this.socket.onopen = function (event) {
+    this.socket.onopen = (event) => {
       console.log('Connected to WebSocket server.');
     };
 
-    this.socket.onmessage = function (event) {
-      console.log('New message received! ', event);
+    this.socket.onmessage = (event) => {
       let incomingMessage = JSON.parse(event.data);
       this.setState({
-        messages: [this.state.messages].concat(incomingMessage)
+        messages: this.state.messages.concat(incomingMessage)
       })
     };
   }
@@ -61,5 +60,11 @@ class App extends Component {
       </div>
     );
   }
+
 }
+
+App.defaultProps = {
+  messages: []
+};
+
 export default App;
