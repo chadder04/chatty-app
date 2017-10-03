@@ -63,8 +63,4 @@ class App extends Component {
 
 }
 
-App.defaultProps = {
-  messages: []
-};
-
 export default App;
