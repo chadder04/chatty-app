@@ -13,7 +13,7 @@ class App extends Component {
     };
 
     this.addMessage = this.addMessage.bind(this);
-    this.handleEnter = this.handleEnter.bind(this);
+    this.setUsername = this.setUsername.bind(this);
   }
 
 
@@ -42,13 +42,11 @@ class App extends Component {
     }
     this.socket.send(JSON.stringify(newMessage));
   }
-  
-  handleEnter(e) {
-    let keycode = (e.keyCode ? e.keyCode : e.which);
-    if (keycode == '13') {
-      this.addMessage(this.state.currentUser.name, e.target.value);
-      e.target.value = '';
-    }
+
+  setUsername(username) {
+    this.setState({
+      currentUser: { name: username }
+    });
   }
   
   render() {
@@ -56,7 +54,7 @@ class App extends Component {
       <div>
         <nav className="navbar"><a href="/" className="navbar-brand">Chatty</a></nav>
         <MessageList messageList={this.state.messages}></MessageList>
-        <ChatBar currentUser={this.state.currentUser} handleEnter={this.handleEnter}></ChatBar>
+        <ChatBar currentUser={this.state.currentUser} setUsername={this.setUsername} addMessage={this.addMessage}></ChatBar>
       </div>
     );
   }
