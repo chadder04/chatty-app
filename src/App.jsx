@@ -24,7 +24,10 @@ class App extends Component {
 
     this.socket.onmessage = function (event) {
       console.log('New message received! ', event);
-      
+      let incomingMessage = JSON.parse(event.data);
+      this.setState({
+        messages: [this.state.messages].concat(incomingMessage)
+      })
     };
   }
 
