@@ -21,6 +21,7 @@ class ChatBar extends Component {
     let keycode = (e.keyCode ? e.keyCode : e.which);
     if (keycode == '13') {
       this.props.setUsername(e.target.value);
+      this.props.addMessage(e.target.value, `${this.props.currentUser.name} changed their name to ${e.target.value}`, 'postNotification')
       e.target.value = e.target.value;
     }
   }
