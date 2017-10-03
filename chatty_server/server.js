@@ -14,21 +14,45 @@ const server = express()
 // Create the WebSockets server
 const wss = new WebSocket.Server({ server });
 
+let onlineUsers = 0;
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
+    onlineUsers = onlineUsers + 1;
 
     ws.onmessage = function (event) {
         // Parse incoming data as JSON object
-        const incomingMessage = JSON.parse(event.data);
+        const data = JSON.parse(event.data);
 
         // Craft outgoing message including a UUID
         const outgoingMessage = {
-            id: uuidv1(),
-            username: incomingMessage.username,
-            content: incomingMessage.content
+            id: uuidv1()
         }
+
+        switch (data.type) {
+            case 'postMessage':
+                // handle incoming message
+                outgoingMessage.type = 'incomingMessage';
+                outgoingMessage.username = data.username;
+                outgoingMessage.content = data.content;
+                break;
+            case 'postNotification':
+                // handle incoming notification
+                outgoingMessage.type = 'incomingNotification';
+                outgoingMessage.content = data.content;
+                break;
+            case 'postOnlineUser':
+                outgoingMessage.type = 'incomingOnlineUser';
+                outgoingMessage.content = data.content;
+                outgoingMessage.usersOnline = onlineUsers;
+                break;
+            default:
+                // show an error in the console if the message type is unknown
+                throw new Error('Unknown event type ' + data.type);
+        }
+
 
         // Broadcast to all.
         wss.clients.forEach(function each(client) {
@@ -39,5 +63,7 @@ wss.on('connection', (ws) => {
     }
 
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-    ws.on('close', () => console.log('Client disconnected'));
+    ws.on('close', () => {
+        onlineUsers = onlineUsers - 1;
+    });
 });
