@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
+import HeaderBar from './HeaderBar.jsx';
 
 class App extends Component {
 
@@ -8,7 +9,8 @@ class App extends Component {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
     this.state = {
-      currentUser: { name: 'Chadder' },
+      currentUser: { name: 'NewUser' },
+      usersOnline: 0,
       messages: []
     };
 
@@ -19,13 +21,43 @@ class App extends Component {
 
   componentDidMount() {
     this.socket.onopen = (event) => {
-      console.log('Connected to WebSocket server.');
+      this.addMessage('NewUser', 'A new user has connected..', 'postOnlineUser');
     };
 
     this.socket.onmessage = (event) => {
-      let incomingMessage = JSON.parse(event.data);
+      const data = JSON.parse(event.data);
+      
+      let incomingData = {}
+
+      switch(data.type) {
+        case 'incomingMessage':
+          // handle incoming message
+          incomingData.id = data.id;
+          incomingData.type = data.type;
+          incomingData.username = data.username;
+          incomingData.content = data.content;
+          break;
+        case 'incomingNotification':
+          // handle incoming notification
+          incomingData.id = data.id;
+          incomingData.type = data.type;
+          incomingData.content = data.content;
+          break;
+        case 'incomingOnlineUser':
+          incomingData.id = data.id;
+          incomingData.type = data.type;
+          incomingData.content = data.content;
+          this.setState({
+            usersOnline: data.usersOnline
+          })
+          break;
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error('Unknown event type ' + data.type);
+      }
+
       this.setState({
-        messages: this.state.messages.concat(incomingMessage)
+        messages: this.state.messages.concat(incomingData)
       })
     };
   }
@@ -35,8 +67,9 @@ class App extends Component {
   }
 
   
-  addMessage(user, message) {
+  addMessage(user, message, type = 'postMessage') {
     const newMessage = {
+      type: type,
       username: user,
       content: message
     }
@@ -52,9 +85,16 @@ class App extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar"><a href="/" className="navbar-brand">Chatty</a></nav>
-        <MessageList messageList={this.state.messages}></MessageList>
-        <ChatBar currentUser={this.state.currentUser} setUsername={this.setUsername} addMessage={this.addMessage}></ChatBar>
+        <HeaderBar 
+          usersOnline={this.state.usersOnline} />
+        <MessageList 
+          messageList={this.state.messages}>
+        </MessageList>
+        <ChatBar 
+          currentUser={this.state.currentUser} 
+          setUsername={this.setUsername} 
+          addMessage={this.addMessage}>
+        </ChatBar>
       </div>
     );
   }
