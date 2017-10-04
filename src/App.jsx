@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
     this.state = {
-      currentUser: { name: 'NewUser' },
+      currentUser: { name: 'Anonymous', usernameColor: 'black' },
       usersOnline: 0,
       messages: []
     };
@@ -35,6 +35,7 @@ class App extends Component {
           incomingData.id = data.id;
           incomingData.type = data.type;
           incomingData.username = data.username;
+          incomingData.usernameColor = data.usernameColor;
           incomingData.content = data.content;
           break;
         case 'incomingNotification':
@@ -42,12 +43,18 @@ class App extends Component {
           incomingData.id = data.id;
           incomingData.type = data.type;
           incomingData.content = data.content;
+          incomingData.usernameColor = data.usernameColor;
           break;
         case 'incomingOnlineUser':
           incomingData.id = data.id;
           incomingData.type = data.type;
           incomingData.content = data.content;
+          incomingData.usernameColor = data.usernameColor;
           this.setState({
+            currentUser: { 
+              name: this.state.currentUser.name, 
+              usernameColor: data.usernameColor 
+            },
             usersOnline: data.usersOnline
           })
           break;
@@ -71,6 +78,7 @@ class App extends Component {
     const newMessage = {
       type: type,
       username: user,
+      usernameColor: this.state.currentUser.usernameColor,
       content: message
     }
     this.socket.send(JSON.stringify(newMessage));
@@ -78,7 +86,10 @@ class App extends Component {
 
   setUsername(username) {
     this.setState({
-      currentUser: { name: username }
+      currentUser: { 
+        name: username,
+        usernameColor: this.state.currentUser.usernameColor
+       }
     });
   }
   
