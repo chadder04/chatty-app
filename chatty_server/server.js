@@ -16,6 +16,13 @@ const wss = new WebSocket.Server({ server });
 
 let onlineUsers = 0;
 
+function getRandomUsernameColor() {
+    let colorsArray = ['red','blue','green','purple'];
+    let rand = Math.floor(Math.random() * (colorsArray.length - 1 + 1)) + 1; 
+    console.log(colorsArray[rand]);
+    return colorsArray[rand];
+}
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
@@ -36,6 +43,7 @@ wss.on('connection', (ws) => {
                 // handle incoming message
                 outgoingMessage.type = 'incomingMessage';
                 outgoingMessage.username = data.username;
+                outgoingMessage.usernameColor = data.usernameColor;
                 outgoingMessage.content = data.content;
                 break;
             case 'postNotification':
@@ -47,6 +55,7 @@ wss.on('connection', (ws) => {
                 outgoingMessage.type = 'incomingOnlineUser';
                 outgoingMessage.content = data.content;
                 outgoingMessage.usersOnline = onlineUsers;
+                outgoingMessage.usernameColor = getRandomUsernameColor();
                 break;
             default:
                 // show an error in the console if the message type is unknown
