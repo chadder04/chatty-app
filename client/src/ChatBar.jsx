@@ -12,7 +12,7 @@ class ChatBar extends Component {
   sendMessage(e) {
     let keycode = (e.keyCode ? e.keyCode : e.which);
     if (keycode == '13') {
-      this.props.addMessage(this.props.currentUser.name, e.target.value);
+      this.props.addMessage(this.props.currentUser.name, e.target.value, 'postMessage');
       e.target.value = '';
     }
   }
@@ -20,7 +20,7 @@ class ChatBar extends Component {
   setUsername(e) {
     let keycode = (e.keyCode ? e.keyCode : e.which);
     if (keycode == '13') {
-      this.props.setUsername(e.target.value);
+      this.props.setUsername(e.target.value, this.props.currentUser.color);
       this.props.addMessage(e.target.value, `${this.props.currentUser.name} changed their name to ${e.target.value}`, 'postNotification')
       e.target.value = e.target.value;
     }
