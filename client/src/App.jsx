@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
     this.state = {
-      currentUser: { name: 'Anonymous', usernameColor: 'black' },
+      currentUser: { name: 'Anonymous', color: 'black' },
       usersOnline: 0,
       messages: []
     };
@@ -20,22 +20,18 @@ class App extends Component {
 
 
   componentDidMount() {
-    this.socket.onopen = (event) => {
-      this.addMessage('NewUser', 'A new user has connected..', 'postOnlineUser');
-    };
-
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
+
       let incomingData = {}
 
-      switch(data.type) {
+      switch (data.type) {
         case 'incomingMessage':
           // handle incoming message
           incomingData.id = data.id;
           incomingData.type = data.type;
           incomingData.username = data.username;
-          incomingData.usernameColor = data.usernameColor;
+          incomingData.color = data.color;
           incomingData.content = data.content;
           break;
         case 'incomingNotification':
@@ -43,20 +39,23 @@ class App extends Component {
           incomingData.id = data.id;
           incomingData.type = data.type;
           incomingData.content = data.content;
-          incomingData.usernameColor = data.usernameColor;
+          incomingData.color = data.color;
           break;
         case 'incomingOnlineUser':
           incomingData.id = data.id;
           incomingData.type = data.type;
-          incomingData.content = data.content;
-          incomingData.usernameColor = data.usernameColor;
+          incomingData.content = 'A new user has connected..';
           this.setState({
-            currentUser: { 
-              name: this.state.currentUser.name, 
-              usernameColor: data.usernameColor 
-            },
             usersOnline: data.usersOnline
           })
+          break;
+        case 'incomingSetColor':
+          this.setState({
+            currentUser: {
+              name: this.state.currentUser.name,
+              color: data.color
+            }
+          });
           break;
         default:
           // show an error in the console if the message type is unknown
@@ -73,37 +72,37 @@ class App extends Component {
     this.socket.close()
   }
 
-  
-  addMessage(user, message, type = 'postMessage') {
+
+  addMessage(user, message, type) {
     const newMessage = {
       type: type,
       username: user,
-      usernameColor: this.state.currentUser.usernameColor,
+      color: this.state.currentUser.color,
       content: message
     }
     this.socket.send(JSON.stringify(newMessage));
   }
 
-  setUsername(username) {
+  setUsername(username, color) {
     this.setState({
-      currentUser: { 
+      currentUser: {
         name: username,
-        usernameColor: this.state.currentUser.usernameColor
-       }
+        color: color
+      }
     });
   }
-  
+
   render() {
     return (
       <div>
-        <HeaderBar 
+        <HeaderBar
           usersOnline={this.state.usersOnline} />
-        <MessageList 
+        <MessageList
           messageList={this.state.messages}>
         </MessageList>
-        <ChatBar 
-          currentUser={this.state.currentUser} 
-          setUsername={this.setUsername} 
+        <ChatBar
+          currentUser={this.state.currentUser}
+          setUsername={this.setUsername}
           addMessage={this.addMessage}>
         </ChatBar>
       </div>
