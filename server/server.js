@@ -83,7 +83,7 @@ wss.on('connection', (ws) => {
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
     ws.on('close', () => {
         broadcast({
-            id, uuidv1(),
+            id: uuidv1(),
             type: 'incomingOnlineUser',
             usersOnline: wss.clients.size
         });
