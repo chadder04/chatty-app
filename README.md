@@ -3,6 +3,11 @@ Chatty App
 
 A single page app that uses React, a popular front-end library created and used heavily by Facebook as well as modern tools for Node including Webpack and Babel for multi-user real-time updates. No persistent database is involved in this app; the focus is on the client-side experience.
 
+### Final Product
+
+![Chatty App 1](https://github.com/chadder04/chatty-app/blob/master/docs/chatty-app-1.png)
+![Chatty App 2](https://github.com/chadder04/chatty-app/blob/master/docs/chatty-app-2.png)
+
 ### Usage
 
 Clone this repository. 
