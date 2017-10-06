@@ -10,6 +10,7 @@ class ChatBar extends Component {
   }
 
   sendMessage(e) {
+    if (e.target.value === '' || e.target.value === ' ') { return false; }
     if (e.key === 'Enter') {
       this.props.addMessage(this.props.currentUser.name, e.target.value, 'postMessage');
       e.target.value = '';
