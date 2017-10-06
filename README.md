@@ -6,6 +6,7 @@ A single page app that uses React, a popular front-end library created and used 
 ### Final Product
 
 ![Chatty App 1](https://github.com/chadder04/chatty-app/blob/master/docs/chatty-app-1.png)
+
 ![Chatty App 2](https://github.com/chadder04/chatty-app/blob/master/docs/chatty-app-2.png)
 
 ### Usage
