@@ -12,25 +12,22 @@ class MessageList extends Component {
     return (
       <main className="messages">
         {this.props.messageList.map((message) => {
-
           switch (message.type) {
             case 'incomingMessage':
               return (
                 <Message key={message.id} messageBody={message}></Message>
               );
             case 'incomingNotification':
-              return (
-                <SystemMessage key={message.id} messageBody={message.content}></SystemMessage>
-              );
+            case 'incomingDisconnectedUser':
             case 'incomingOnlineUser':
               return (
                 <SystemMessage key={message.id} messageBody={message.content}></SystemMessage>
               );
           }
-
         })}
       </main>
     );
   }
 }
+
 export default MessageList;
