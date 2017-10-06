@@ -4,7 +4,7 @@ import ChatBar from './ChatBar.jsx';
 import HeaderBar from './HeaderBar.jsx';
 
 class App extends Component {
-
+  
   constructor(props) {
     super(props);
     this.socket = new WebSocket('ws://localhost:3001');
@@ -21,45 +21,50 @@ class App extends Component {
 
   componentDidMount() {
     this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      let incomingData = JSON.parse(event.data);
 
-      let incomingData = {}
-
-      switch (data.type) {
+      switch (incomingData.type) {
         case 'incomingMessage':
-          // handle incoming message
-          incomingData.id = data.id;
-          incomingData.type = data.type;
-          incomingData.username = data.username;
-          incomingData.color = data.color;
-          incomingData.content = data.content;
+          if (incomingData.content[0] === '/') {
+            let cmd = incomingData.content.split(' ').shift().replace('/', '');
+            let msg = incomingData.content.split(' ').splice(1).join(' ');
+            switch (cmd) {
+              case 'me':
+                incomingData.type = 'incomingNotification';
+                incomingData.content = incomingData.username + ' ' + msg;
+              break;
+              default: 
+                incomingData.type = 'incomingNotification';
+                incomingData.content = incomingData.username + ' attempted to execute a command that was not recognized.';
+              break;
+            }
+          }
           break;
         case 'incomingNotification':
-          // handle incoming notification
-          incomingData.id = data.id;
-          incomingData.type = data.type;
-          incomingData.content = data.content;
-          incomingData.color = data.color;
           break;
         case 'incomingOnlineUser':
-          incomingData.id = data.id;
-          incomingData.type = data.type;
           incomingData.content = 'A new user has connected..';
           this.setState({
-            usersOnline: data.usersOnline
+            usersOnline: incomingData.usersOnline
+          })
+          break;
+        case 'incomingDisconnectedUser':
+          incomingData.content = 'A user has disconnected..';
+          this.setState({
+            usersOnline: incomingData.usersOnline
           })
           break;
         case 'incomingSetColor':
           this.setState({
             currentUser: {
               name: this.state.currentUser.name,
-              color: data.color
+              color: incomingData.color
             }
           });
           break;
         default:
           // show an error in the console if the message type is unknown
-          throw new Error('Unknown event type ' + data.type);
+          throw new Error('Unknown event type ' + incomingData.type);
       }
 
       this.setState({
