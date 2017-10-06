@@ -1,16 +1,18 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css");
 
+$theme-base-color: orange;
+
 body {
-  background: white;
-  color: black;
+  background: rgb(255, 255, 255);
+  color: darken($theme-base-color, 30%);
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   margin: 70px 0;
 }
 
 .chatbar {
-  background: orange;
+  background: $theme-base-color;
   border-top: 1px solid black;
   bottom: 0;
   display: flex;
@@ -65,7 +67,7 @@ body {
 }
 
 .navbar {
-  background: orange;
+  background: $theme-base-color;
   border-bottom: 1px solid black;
   height: 60px;
   left: 0;
